@@ -1,8 +1,7 @@
-import { DataStoredInToken, User } from "@src/features/auth/entities";
+import { DataStoredInToken } from "@src/features/auth/entities";
+import userModel from "@src/features/auth/schemas/user.schema";
 import { NextFunction, Response } from "express";
 import { verify } from "jsonwebtoken";
-import { Model } from "mongoose";
-import { container } from "tsyringe";
 import { SECRET_KEY } from "../configs/config";
 import { HttpException } from "../exceptions";
 import { RequestWithUser } from "../interfaces/request";
@@ -12,19 +11,19 @@ const isAuthenticated = async (
   res: Response,
   next: NextFunction
 ) => {
+
   try {
     const Authorization =
       (req.header('Authorization')
         ? req.header('Authorization').split('Bearer ')[1]
         : null);
-
+        
     if (Authorization) {
       const verificationResponse = verify(
         Authorization,
         SECRET_KEY
       ) as DataStoredInToken;
       
-      const userModel = container.resolve<Model<User>>('USER');
       const userId = verificationResponse._id;
       const findUser = await userModel.findById(userId);
 
@@ -40,8 +39,6 @@ const isAuthenticated = async (
   } catch (error) {
     next(new HttpException(401, `authentication error : ${error.message}`));
   }
-
-  next();
 };
 
 export default isAuthenticated;

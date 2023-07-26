@@ -1,15 +1,14 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document } from "mongoose";
 
-
-import { userSchema } from '.';
-import { Reaction, reactionSchema } from './reaction.schema';
+import { userSchema } from "@src/features/auth/schemas";
+import { Reaction, reactionSchema } from "./reaction.schema";
 const { Schema } = mongoose;
 
 export interface Comment {
-  id?:string
+  id?: string;
   user: {
-    username:string;
-    name:string;
+    username: string;
+    name: string;
   };
   comment: string;
   reactions: Reaction[];
@@ -22,11 +21,11 @@ export const commentSchema = new Schema<Comment>({
   comment: String,
   reactions: [reactionSchema],
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
 });
 
 const commentModel = mongoose.model<Comment & Document>(
-  'comment',
+  "comment",
   commentSchema
 );
 export default commentModel;

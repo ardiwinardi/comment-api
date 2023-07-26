@@ -1,14 +1,14 @@
-import { NotFoundException } from '@src/shared/exceptions';
-import { Model } from 'mongoose';
-import { inject, injectable } from 'tsyringe';
+import { NotFoundException } from "@src/shared/exceptions";
+import { Model } from "mongoose";
+import { inject, injectable } from "tsyringe";
 
-import { User } from '../auth/entities';
-import { CommentsRepository } from './comments.repository';
-import { Comment, Reaction } from './shemas';
+import { User } from "../auth/schemas";
+import { CommentsRepository } from "./comments.repository";
+import { Comment, Reaction } from "./shemas";
 
 @injectable()
 export class CommentsService implements CommentsRepository {
-  constructor(@inject('COMMENT') private commentModel: Model<Comment>) {}
+  constructor(@inject("COMMENT") private commentModel: Model<Comment>) {}
 
   findById(id: string): Promise<Comment> {
     return this.commentModel.findById(id).exec();
@@ -26,32 +26,32 @@ export class CommentsService implements CommentsRepository {
   async update({ id, comment }: Comment): Promise<Comment> {
     const item = await this.commentModel.findByIdAndUpdate(id, {
       comment: comment,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
-    if (!item) throw new NotFoundException('comment not found');
+    if (!item) throw new NotFoundException("comment not found");
     return item;
   }
 
   async remove({ id }: Comment): Promise<Comment> {
     const item = await this.commentModel.findByIdAndDelete(id);
-    if (!item) throw new NotFoundException('comment not found');
+    if (!item) throw new NotFoundException("comment not found");
     return item;
   }
 
   async addReaction(
     commentId: string,
-    type: Reaction['type'],
+    type: Reaction["type"],
     user: User
   ): Promise<Reaction> {
     const payload: Reaction = {
       username: user.username,
-      type: type as Reaction['type'],
-      createdAt: new Date()
+      type: type as Reaction["type"],
+      createdAt: new Date(),
     };
 
     // checking is comment exists
     const item = await this.commentModel.findById(commentId);
-    if (!item) throw new NotFoundException('comment not found');
+    if (!item) throw new NotFoundException("comment not found");
     const reactions = [...item.reactions];
 
     // checking is reactions not empty

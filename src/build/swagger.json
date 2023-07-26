@@ -91,82 +91,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Reaction": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string",
-						"enum": [
-							"like",
-							"dislike"
-						]
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"username",
-					"type",
-					"createdAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Comment": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"user": {
-						"properties": {
-							"name": {
-								"type": "string"
-							},
-							"username": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"name",
-							"username"
-						],
-						"type": "object"
-					},
-					"comment": {
-						"type": "string"
-					},
-					"reactions": {
-						"items": {
-							"$ref": "#/components/schemas/Reaction"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"user",
-					"comment",
-					"reactions",
-					"createdAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"CreateCommentDTO": {
 				"properties": {
 					"comment": {
@@ -303,12 +227,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Comment"
-									},
-									"type": "array"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -330,9 +249,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Comment"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -366,9 +283,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Comment"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -409,9 +324,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Comment"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -444,9 +357,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Reaction"
-								}
+								"schema": {}
 							}
 						}
 					}

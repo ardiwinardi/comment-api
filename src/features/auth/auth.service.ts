@@ -7,22 +7,23 @@ import { Model } from "mongoose";
 import { inject, injectable } from "tsyringe";
 import { AuthRepository } from "./auth.repository";
 import { LoginDTO, RegisterDTO } from "./dtos";
-import { TokenData, User } from "./entities";
+import { TokenData } from "./entities";
+import { User } from "./schemas";
 
 @injectable()
 export class AuthService implements AuthRepository {
-  constructor(@inject('USER') private userModel: Model<User>) {}
+  constructor(@inject("USER") private userModel: Model<User>) {}
 
   async register(dto: RegisterDTO): Promise<User> {
-    const exists = await this.userModel.findOne({ username: dto.username });    
-    if(exists) throw new HttpException(422, 'user already exists');
+    const exists = await this.userModel.findOne({ username: dto.username });
+    if (exists) throw new HttpException(422, "user already exists");
 
     const hashedPassword = await hash(dto.password, 10);
     const createdUser = new this.userModel({
       name: dto.name,
       username: dto.username,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
     return createdUser.save();
   }
@@ -30,7 +31,7 @@ export class AuthService implements AuthRepository {
   async login(dto: LoginDTO): Promise<TokenData> {
     const user = await this.userModel.findOne({ username: dto.username });
 
-    if(!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException();
 
     const hashedPassword = user.password;
     const isMatch = await compare(dto.password, hashedPassword);
@@ -44,7 +45,7 @@ export class AuthService implements AuthRepository {
 
     return {
       expiresIn,
-      token: sign(dataStoredInToken, secretKey, { expiresIn })
+      token: sign(dataStoredInToken, secretKey, { expiresIn }),
     };
   }
 }

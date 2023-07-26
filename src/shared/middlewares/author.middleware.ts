@@ -20,12 +20,12 @@ const isCommentAuthor = async (
     if (!item) next(new NotFoundException('comment not found'));
     if (item.user.username !== user.username) next(new ForbidenException());
     req.comment = item
-
+    next();
   } catch (error) {
     next(new HttpException(500, `Something went wrong ${error}`));
   }
 
-  next();
+  
 };
 
 export default isCommentAuthor;

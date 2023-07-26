@@ -1,6 +1,5 @@
-
-import { User } from '../auth/entities';
-import { Comment, Reaction } from './shemas';
+import { User } from "../auth/schemas";
+import { Comment, Reaction } from "./shemas";
 
 export interface CommentsRepository {
   findAll(): Promise<Comment[]>;
@@ -10,7 +9,7 @@ export interface CommentsRepository {
   remove(item: Comment): Promise<Comment>;
   addReaction(
     commentId: string,
-    type: Reaction['type'],
+    type: Reaction["type"],
     user: User
   ): Promise<Reaction>;
 }

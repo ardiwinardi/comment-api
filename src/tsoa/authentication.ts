@@ -7,9 +7,9 @@ export function expressAuthentication(
   request: express.Request,
   securityName: string,
   scopes?: string[]
-): Promise<any> | void {
+): Promise<any> {
   
-  if (securityName === 'jwt') {    
+  if (securityName === 'jwt') {
     const token = request.header('Authorization')
       ? request.header('Authorization').split('Bearer ')[1]
       : '';
@@ -23,15 +23,17 @@ export function expressAuthentication(
           reject(err);
         } else {
           // Check if JWT contains all required scopes
-          if (scopes){for (const scope of scopes) {
-            if (!decoded.scopes.includes(scope)) {
-              reject(new Error('JWT does not contain required scope.'));
+          if (scopes) {
+            for (const scope of scopes) {
+              if (!decoded.scopes.includes(scope)) {
+                reject(new Error('JWT does not contain required scope.'));
+              }
             }
-          }}
-            
+          }
           resolve(decoded);
         }
       });
     });
   }
+  
 }

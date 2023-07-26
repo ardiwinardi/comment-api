@@ -8,12 +8,14 @@ import { CommentsService } from './comments.service';
 import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
 import commentModel, { Comment } from './shemas/comment.schema';
 
-@registry([
+
+@registry([ 
   {
     token: 'COMMENT',
     useFactory: () => commentModel
   }
 ])
+
 @Tags('comments')
 @Route('comments')
 @Middlewares(isAuthenticated)
@@ -56,7 +58,7 @@ export class CommentsController extends Controller {
     const comment = {
       ...request.comment,
       comment: payload.comment
-    }
+    };
 
     return this.commentService.update(comment);
   }
@@ -78,5 +80,4 @@ export class CommentsController extends Controller {
   ) {
     return this.commentService.addReaction(id, payload.type, request.user);
   }
-
 }

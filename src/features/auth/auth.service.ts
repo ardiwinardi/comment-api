@@ -1,4 +1,5 @@
 import { SECRET_KEY } from "@src/shared/configs/config";
+import { HttpException } from "@src/shared/exceptions";
 import { UnauthorizedException } from "@src/shared/exceptions/unauthorized.exception";
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
@@ -13,6 +14,9 @@ export class AuthService implements AuthRepository {
   constructor(@inject('USER') private userModel: Model<User>) {}
 
   async register(dto: RegisterDTO): Promise<User> {
+    const exists = await this.userModel.findOne({ username: dto.username });    
+    if(exists) throw new HttpException(422, 'user already exists');
+
     const hashedPassword = await hash(dto.password, 10);
     const createdUser = new this.userModel({
       name: dto.name,
@@ -26,11 +30,11 @@ export class AuthService implements AuthRepository {
   async login(dto: LoginDTO): Promise<TokenData> {
     const user = await this.userModel.findOne({ username: dto.username });
 
-      if(!user) throw new UnauthorizedException();
+    if(!user) throw new UnauthorizedException();
 
-     const hashedPassword = user.password;
-     const isMatch = await compare(dto.password, hashedPassword);
-     if (isMatch) return this.createToken(user);
+    const hashedPassword = user.password;
+    const isMatch = await compare(dto.password, hashedPassword);
+    if (isMatch) return this.createToken(user);
   }
 
   private createToken(user: User): TokenData {

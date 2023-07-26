@@ -1,5 +1,7 @@
 import mongoose, { Document } from 'mongoose';
-import { userSchema } from '../../auth/schemas/user.schema';
+
+
+import { userSchema } from '.';
 import { Reaction, reactionSchema } from './reaction.schema';
 const { Schema } = mongoose;
 
@@ -24,7 +26,7 @@ export const commentSchema = new Schema<Comment>({
 });
 
 const commentModel = mongoose.model<Comment & Document>(
-  'comments',
+  'comment',
   commentSchema
 );
 export default commentModel;

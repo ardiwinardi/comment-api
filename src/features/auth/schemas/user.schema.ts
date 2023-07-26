@@ -10,5 +10,5 @@ export const userSchema = new Schema<User>({
   createdAt: Date  
 });
 
-const userModel = mongoose.model<User & Document>('users', userSchema);
+const userModel = mongoose.model<User & Document>('user', userSchema);
 export default userModel;

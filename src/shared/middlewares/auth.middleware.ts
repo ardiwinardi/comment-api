@@ -1,7 +1,8 @@
-import { DataStoredInToken } from "@src/features/auth/entities";
-import userModel from "@src/features/auth/schemas/user.schema";
+import { DataStoredInToken, User } from "@src/features/auth/entities";
 import { NextFunction, Response } from "express";
 import { verify } from "jsonwebtoken";
+import { Model } from "mongoose";
+import { container } from "tsyringe";
 import { SECRET_KEY } from "../configs/config";
 import { HttpException } from "../exceptions";
 import { RequestWithUser } from "../interfaces/request";
@@ -23,6 +24,7 @@ const isAuthenticated = async (
         SECRET_KEY
       ) as DataStoredInToken;
       
+      const userModel = container.resolve<Model<User>>('USER');
       const userId = verificationResponse._id;
       const findUser = await userModel.findById(userId);
 

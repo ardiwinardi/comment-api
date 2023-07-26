@@ -3,7 +3,7 @@
   "noImplicitAdditionalProperties": "throw-on-extras",
   "controllerPathGlobs": ["src/**/*.controller.ts"],
   "spec": {
-    "outputDirectory": "build",
+    "outputDirectory": "src/build",
     "specVersion": 3,
     "securityDefinitions": {
       "jwt": {
@@ -15,7 +15,7 @@
     }
   },
   "routes": {
-    "routesDir": "build",
+    "routesDir": "src/build",
     "iocModule": "src/tsoa/ioc",
     "authenticationModule": "src/tsoa/authentication"
   }

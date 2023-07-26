@@ -5,14 +5,15 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
-import { RegisterRoutes } from '../build/routes';
+import { RegisterRoutes } from './build/routes';
 import logger from './shared/commons/logger';
 import { NODE_ENV, ORIGIN, PORT } from './shared/configs/config';
 import { databaseConnection } from './shared/configs/database';
 import errorMiddleware from './shared/middlewares/error.middleware';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const swagger = require('../build/swagger.json');
+const swagger = require('./build/swagger.json');
+
 
 class App {
   public app: Application;

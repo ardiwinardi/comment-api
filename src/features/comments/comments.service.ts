@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { inject, injectable } from 'tsyringe';
 
 import { CommentsRepository } from './comments.repository';
-import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dto';
+import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
 import { Comment, Reaction } from './shemas';
 
 @injectable()

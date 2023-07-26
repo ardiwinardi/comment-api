@@ -6,6 +6,91 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"TokenData": {
+				"properties": {
+					"token": {
+						"type": "string"
+					},
+					"expiresIn": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"token",
+					"expiresIn"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginDTO": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"username",
+					"password",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterDTO": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Reaction": {
 				"properties": {
 					"userId": {
@@ -131,7 +216,14 @@
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"in": "header",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
 	},
 	"info": {
 		"title": "typescript-express-starter",
@@ -144,6 +236,70 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TokenData"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterDTO"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/comments": {
 			"get": {
 				"operationId": "GetAll",
@@ -162,7 +318,14 @@
 						}
 					}
 				},
-				"security": [],
+				"tags": [
+					"comments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": []
 			},
 			"post": {
@@ -179,6 +342,9 @@
 						}
 					}
 				},
+				"tags": [
+					"comments"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -208,6 +374,9 @@
 						}
 					}
 				},
+				"tags": [
+					"comments"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -244,6 +413,9 @@
 						}
 					}
 				},
+				"tags": [
+					"comments"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -272,6 +444,9 @@
 						}
 					}
 				},
+				"tags": [
+					"comments"
+				],
 				"security": [],
 				"parameters": [
 					{

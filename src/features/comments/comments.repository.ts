@@ -1,4 +1,4 @@
-import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dto';
+import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
 import { Comment, Reaction } from './shemas';
 
 export interface CommentsRepository {

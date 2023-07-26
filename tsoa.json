@@ -4,10 +4,19 @@
   "controllerPathGlobs": ["src/**/*.controller.ts"],
   "spec": {
     "outputDirectory": "build",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
   },
   "routes": {
     "routesDir": "build",
-    "iocModule": "src/ioc"
+    "iocModule": "src/tsoa/ioc",
+    "authenticationModule": "./src/tsoa/authentication.ts"
   }
 }

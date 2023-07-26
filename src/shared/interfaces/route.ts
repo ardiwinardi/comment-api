@@ -1,4 +1,4 @@
-export { Router } from 'express';
+import { Router } from 'express';
 
 export interface Route {
   router: Router;

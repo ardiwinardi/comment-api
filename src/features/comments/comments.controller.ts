@@ -1,8 +1,9 @@
 import { validateId } from '@src/shared/commons/validate';
-import { Body, Controller, Delete, Get, Path, Post, Put, Route } from 'tsoa';
+import authMiddleware from '@src/shared/middlewares/auth.middleware';
+import { Body, Controller, Delete, Get, Middlewares, Path, Post, Put, Route, Security, Tags } from 'tsoa';
 import { injectable, registry } from 'tsyringe';
 import { CommentsService } from './comments.service';
-import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dto';
+import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
 import commentModel from './shemas/comment.schema';
 
 @registry([
@@ -11,7 +12,9 @@ import commentModel from './shemas/comment.schema';
     useFactory: () => commentModel
   }
 ])
+@Tags('comments')
 @Route('comments')
+@Middlewares(authMiddleware)
 @injectable()
 export class CommentsController extends Controller {
   constructor(private readonly commentService: CommentsService) {
@@ -19,6 +22,7 @@ export class CommentsController extends Controller {
   }
 
   @Get()
+  @Security('jwt')
   getAll() {
     return this.commentService.findAll();
   }

@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
+import { userSchema } from '../../auth/schemas/user.schema';
 import { Reaction, reactionSchema } from './reaction.schema';
-import { userSchema } from './user.schema';
 const { Schema } = mongoose;
 
 export interface Comment {

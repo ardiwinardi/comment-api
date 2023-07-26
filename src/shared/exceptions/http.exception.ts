@@ -2,9 +2,9 @@ export class HttpException extends Error {
   public status: number;
   public message: string;
 
-  constructor(message: string) {
+  constructor(status:number, message: string) {
     super(message);
-    this.status = 500;
+    this.status = status;
     this.message = message;
   }
 }

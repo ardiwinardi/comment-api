@@ -1,10 +1,16 @@
-import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
+
+import { User } from '../auth/entities';
 import { Comment, Reaction } from './shemas';
 
 export interface CommentsRepository {
   findAll(): Promise<Comment[]>;
-  create(dto: CreateCommentDTO): Promise<Comment>;
-  update(id: string, dto: UpdateCommentDTO): Promise<Comment>;
-  remove(id: string): Promise<Comment>;
-  addReaction(id: string, dto: AddReactionDTO): Promise<Reaction>;
+  findById(id: string): Promise<Comment>;
+  create(item: Comment): Promise<Comment>;
+  update(item: Comment): Promise<Comment>;
+  remove(item: Comment): Promise<Comment>;
+  addReaction(
+    commentId: string,
+    type: Reaction['type'],
+    user: User
+  ): Promise<Reaction>;
 }

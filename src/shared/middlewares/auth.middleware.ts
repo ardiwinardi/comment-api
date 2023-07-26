@@ -6,7 +6,7 @@ import { SECRET_KEY } from "../configs/config";
 import { HttpException } from "../exceptions";
 import { RequestWithUser } from "../interfaces/request";
 
-const authMiddleware = async (
+const isAuthenticated = async (
   req: RequestWithUser,
   res: Response,
   next: NextFunction
@@ -38,6 +38,8 @@ const authMiddleware = async (
   } catch (error) {
     next(new HttpException(401, `authentication error : ${error.message}`));
   }
+
+  next();
 };
 
-export default authMiddleware;
+export default isAuthenticated;

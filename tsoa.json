@@ -17,6 +17,6 @@
   "routes": {
     "routesDir": "build",
     "iocModule": "src/tsoa/ioc",
-    "authenticationModule": "./src/tsoa/authentication.ts"
+    "authenticationModule": "src/tsoa/authentication"
   }
 }

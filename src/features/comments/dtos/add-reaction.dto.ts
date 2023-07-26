@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 enum ReactionType {
   LIKE = 'like',
@@ -6,10 +6,7 @@ enum ReactionType {
 }
 
 export class AddReactionDTO {
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
-
+  
   @IsEnum(ReactionType)
   @IsNotEmpty()
   type: ReactionType;

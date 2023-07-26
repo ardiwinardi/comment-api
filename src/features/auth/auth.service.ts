@@ -17,7 +17,8 @@ export class AuthService implements AuthRepository {
     const createdUser = new this.userModel({
       name: dto.name,
       username: dto.username,
-      password: hashedPassword
+      password: hashedPassword,
+      createdAt: new Date()
     });
     return createdUser.save();
   }

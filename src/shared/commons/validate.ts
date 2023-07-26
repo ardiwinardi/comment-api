@@ -1,4 +1,4 @@
-import { ValidationError, validate } from 'class-validator';
+import { validate } from 'class-validator';
 import { isValidObjectId } from 'mongoose';
 import { ValidationException } from '../exceptions/validation.exception';
 
@@ -7,13 +7,14 @@ export const validatePayload = async (payload: object) => {
   if (errors.length) throw new ValidationException(errors);
 };
 
-export const validateId = (id: string) => {
+export const validateId = (id: string) : void | ValidationException => {
   if (!isValidObjectId(id)) {
-    const error = new ValidationError();
-    error.property = 'id';
-    error.constraints = {
-      isObjectId: 'id must be a valid object id'
-    };
-    throw new ValidationException([error]);
+    const detail = {
+      ['payload.id']:{
+        message:'id must be a valid object id',
+        value: id
+      }
+    }
+    throw new ValidationException(detail);
   }
 };

@@ -4,10 +4,10 @@ import { Reaction, reactionSchema } from './reaction.schema';
 const { Schema } = mongoose;
 
 export interface Comment {
+  id?:string
   user: {
-    name: string;
-    email: string;
-    avatar: string;
+    username:string;
+    name:string;
   };
   comment: string;
   reactions: Reaction[];

@@ -93,7 +93,7 @@
 			},
 			"Reaction": {
 				"properties": {
-					"userId": {
+					"username": {
 						"type": "string"
 					},
 					"type": {
@@ -113,7 +113,7 @@
 					}
 				},
 				"required": [
-					"userId",
+					"username",
 					"type",
 					"createdAt"
 				],
@@ -122,22 +122,21 @@
 			},
 			"Comment": {
 				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"user": {
 						"properties": {
-							"avatar": {
-								"type": "string"
-							},
-							"email": {
-								"type": "string"
-							},
 							"name": {
+								"type": "string"
+							},
+							"username": {
 								"type": "string"
 							}
 						},
 						"required": [
-							"avatar",
-							"email",
-							"name"
+							"name",
+							"username"
 						],
 						"type": "object"
 					},
@@ -201,15 +200,11 @@
 			},
 			"AddReactionDTO": {
 				"properties": {
-					"userId": {
-						"type": "string"
-					},
 					"type": {
 						"$ref": "#/components/schemas/ReactionType"
 					}
 				},
 				"required": [
-					"userId",
 					"type"
 				],
 				"type": "object",
@@ -345,7 +340,11 @@
 				"tags": [
 					"comments"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -377,7 +376,11 @@
 				"tags": [
 					"comments"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -416,7 +419,11 @@
 				"tags": [
 					"comments"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -447,7 +454,11 @@
 				"tags": [
 					"comments"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

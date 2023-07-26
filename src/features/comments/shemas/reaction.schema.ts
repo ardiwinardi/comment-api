@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 export interface Reaction {
-  userId: string;
+  username: string;
   type: "like" | "dislike";
   createdAt: Date;
   updatedAt?: Date;
 }
 
 export const reactionSchema = new Schema<Reaction>({
-  userId: String,
+  username: String,
   type: String,
   createdAt: Date,
   updatedAt: Date,

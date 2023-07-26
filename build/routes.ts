@@ -6,10 +6,10 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, H
 import { AuthController } from './../src/features/auth/auth.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CommentsController } from './../src/features/comments/comments.controller';
-import { expressAuthentication } from './../src/authentication';
+import { expressAuthentication } from './../src/tsoa/authentication';
 // @ts-ignore - no great way to install types from subpackage
 const promiseAny = require('promise.any');
-import { iocContainer } from './../src/ioc';
+import { iocContainer } from './../src/tsoa/ioc';
 import type { IocContainer, IocContainerFactory } from '@tsoa/runtime';
 import type { RequestHandler, Router } from 'express';
 
@@ -60,7 +60,7 @@ const models: TsoaRoute.Models = {
     "Reaction": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
+            "username": {"dataType":"string","required":true},
             "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["like"]},{"dataType":"enum","enums":["dislike"]}],"required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime"},
@@ -71,7 +71,8 @@ const models: TsoaRoute.Models = {
     "Comment": {
         "dataType": "refObject",
         "properties": {
-            "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"avatar":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},
+            "id": {"dataType":"string"},
+            "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"username":{"dataType":"string","required":true}},"required":true},
             "comment": {"dataType":"string","required":true},
             "reactions": {"dataType":"array","array":{"dataType":"refObject","ref":"Reaction"},"required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -104,7 +105,6 @@ const models: TsoaRoute.Models = {
     "AddReactionDTO": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
             "type": {"ref":"ReactionType","required":true},
         },
         "additionalProperties": false,
@@ -211,12 +211,14 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/comments',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(CommentsController)),
             ...(fetchMiddlewares<RequestHandler>(CommentsController.prototype.create)),
 
             async function CommentsController_create(request: any, response: any, next: any) {
             const args = {
                     payload: {"in":"body","name":"payload","required":true,"ref":"CreateCommentDTO"},
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -241,6 +243,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/comments/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(CommentsController)),
             ...(fetchMiddlewares<RequestHandler>(CommentsController.prototype.update)),
 
@@ -248,6 +251,7 @@ export function RegisterRoutes(app: Router) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
                     payload: {"in":"body","name":"payload","required":true,"ref":"UpdateCommentDTO"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -272,12 +276,14 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.delete('/comments/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(CommentsController)),
             ...(fetchMiddlewares<RequestHandler>(CommentsController.prototype.delete)),
 
             async function CommentsController_delete(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -302,6 +308,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/comments/:id/react',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(CommentsController)),
             ...(fetchMiddlewares<RequestHandler>(CommentsController.prototype.addReaction)),
 
@@ -309,6 +316,7 @@ export function RegisterRoutes(app: Router) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
                     payload: {"in":"body","name":"payload","required":true,"ref":"AddReactionDTO"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

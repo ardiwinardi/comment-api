@@ -2,51 +2,55 @@ import { NotFoundException } from '@src/shared/exceptions';
 import { Model } from 'mongoose';
 import { inject, injectable } from 'tsyringe';
 
+import { User } from '../auth/entities';
 import { CommentsRepository } from './comments.repository';
-import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from './dtos';
 import { Comment, Reaction } from './shemas';
 
 @injectable()
 export class CommentsService implements CommentsRepository {
   constructor(@inject('COMMENT') private commentModel: Model<Comment>) {}
 
+  findById(id: string): Promise<Comment> {
+    return this.commentModel.findById(id).exec();
+  }
+
   findAll(): Promise<Comment[]> {
     return this.commentModel.find().exec();
   }
 
-  create(dto: CreateCommentDTO): Promise<Comment> {
-    const createdComment = new this.commentModel({
-      comment: dto.comment,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
+  create(comment: Comment): Promise<Comment> {
+    const createdComment = new this.commentModel(comment);
     return createdComment.save();
   }
 
-  async update(id: string, dto: UpdateCommentDTO): Promise<Comment> {
+  async update({ id, comment }: Comment): Promise<Comment> {
     const item = await this.commentModel.findByIdAndUpdate(id, {
-      comment: dto.comment,
+      comment: comment,
       updatedAt: new Date()
     });
     if (!item) throw new NotFoundException('comment not found');
     return item;
   }
 
-  async remove(id: string): Promise<Comment> {
+  async remove({ id }: Comment): Promise<Comment> {
     const item = await this.commentModel.findByIdAndDelete(id);
     if (!item) throw new NotFoundException('comment not found');
     return item;
   }
 
-  async addReaction(id: string, dto: AddReactionDTO): Promise<Reaction> {
+  async addReaction(
+    commentId: string,
+    type: Reaction['type'],
+    user: User
+  ): Promise<Reaction> {
     const payload: Reaction = {
-      userId: dto.userId,
-      type: dto.type,
+      username: user.username,
+      type: type as Reaction['type'],
       createdAt: new Date()
     };
 
     // checking is comment exists
-    const item = await this.commentModel.findById(id);
+    const item = await this.commentModel.findById(commentId);
     if (!item) throw new NotFoundException('comment not found');
     const reactions = [...item.reactions];
 
@@ -54,7 +58,7 @@ export class CommentsService implements CommentsRepository {
     if (reactions.length > 0) {
       // checking is user has given reaction
       const index = reactions.findIndex(
-        (reaction) => reaction.userId === payload.userId
+        (reaction) => reaction.username === payload.username
       );
 
       if (index >= 0) {

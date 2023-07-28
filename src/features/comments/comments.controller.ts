@@ -1,4 +1,4 @@
-import formattedResponse from "@src/shared/commons/response";
+import formattedResponse from "@src/shared/commons/fotmat-response";
 import {
   RequestWithComment,
   RequestWithUser,
@@ -41,9 +41,17 @@ export class CommentsController extends Controller {
   }
 
   @Get()
-  async getAll(@Query("orderBy") orderBy?: CommentOrderBy) {
-    const data = await this.commentService.findAll({ orderBy });
-    return formattedResponse({ data });
+  async getAll(
+    @Query("orderBy") orderBy?: CommentOrderBy,
+    @Query("limit") limit?: number,
+    @Query("start") start?: number
+  ) {
+    const comments = await this.commentService.findAll({
+      orderBy,
+      limit,
+      start,
+    });
+    return formattedResponse({ data: comments.data, meta: comments.meta });
   }
 
   @Get("/{id}")

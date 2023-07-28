@@ -6,4 +6,6 @@ export enum CommentOrderBy {
 
 export interface GetCommentsDTO {
   orderBy?: CommentOrderBy;
+  limit?: number;
+  start?: number;
 }

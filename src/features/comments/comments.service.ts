@@ -2,6 +2,7 @@ import { HttpException, NotFoundException } from "@src/shared/exceptions";
 import { Model } from "mongoose";
 import { inject, injectable } from "tsyringe";
 
+import { DataWithMeta } from "@src/shared/interfaces/response";
 import { User } from "../auth/schemas";
 import { CommentsRepository } from "./comments.repository";
 import { CommentOrderBy, GetCommentsDTO } from "./dtos/get-comments.dto";
@@ -15,8 +16,14 @@ export class CommentsService implements CommentsRepository {
     return this.commentModel.findById(id).exec();
   }
 
-  findAll({ orderBy }: GetCommentsDTO): Promise<Comment[]> {
+  async findAll({
+    orderBy,
+    limit = 3,
+    start = 0,
+  }: GetCommentsDTO): Promise<DataWithMeta<Comment[]>> {
     const query = this.commentModel.find();
+    const totalRows = await this.commentModel.find().count();
+
     if (orderBy) {
       if (orderBy === CommentOrderBy.NEWEST) {
         query.sort({ updatedAt: -1 });
@@ -26,7 +33,17 @@ export class CommentsService implements CommentsRepository {
         query.sort({ totalLiked: -1 });
       }
     }
-    return query.exec();
+
+    const data = await query.skip(start).limit(limit).exec();
+
+    return {
+      data,
+      meta: {
+        total: totalRows,
+        limit,
+        start,
+      },
+    };
   }
 
   create(comment: Comment): Promise<Comment> {

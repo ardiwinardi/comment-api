@@ -219,6 +219,24 @@
 						"schema": {
 							"$ref": "#/components/schemas/CommentOrderBy"
 						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "start",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
 					}
 				]
 			},

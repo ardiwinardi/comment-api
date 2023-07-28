@@ -1,4 +1,4 @@
-import formattedResponse from "@src/shared/commons/response";
+import formattedResponse from "@src/shared/commons/fotmat-response";
 import { RequestWithUser } from "@src/shared/interfaces/request";
 import isAuthenticated from "@src/shared/middlewares/auth.middleware";
 import {

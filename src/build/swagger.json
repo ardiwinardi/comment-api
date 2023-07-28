@@ -6,23 +6,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"TokenData": {
-				"properties": {
-					"token": {
-						"type": "string"
-					},
-					"expiresIn": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"token",
-					"expiresIn"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"LoginDTO": {
 				"properties": {
 					"username": {
@@ -35,38 +18,6 @@
 				"required": [
 					"username",
 					"password"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"User": {
-				"properties": {
-					"_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"avatar": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"_id",
-					"name",
-					"username",
-					"password",
-					"createdAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -90,6 +41,14 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"CommentOrderBy": {
+				"enum": [
+					"most-liked",
+					"most-disliked",
+					"newest"
+				],
+				"type": "string"
 			},
 			"CreateCommentDTO": {
 				"properties": {
@@ -155,6 +114,26 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/auth/me": {
+			"get": {
+				"operationId": "GetMe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/auth/login": {
 			"post": {
 				"operationId": "Login",
@@ -163,9 +142,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/TokenData"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -195,9 +172,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -235,12 +210,17 @@
 				"tags": [
 					"comments"
 				],
-				"security": [
+				"security": [],
+				"parameters": [
 					{
-						"jwt": []
+						"in": "query",
+						"name": "orderBy",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/CommentOrderBy"
+						}
 					}
-				],
-				"parameters": []
+				]
 			},
 			"post": {
 				"operationId": "Create",
@@ -276,8 +256,8 @@
 			}
 		},
 		"/comments/{id}": {
-			"put": {
-				"operationId": "Update",
+			"get": {
+				"operationId": "GetById",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -296,6 +276,33 @@
 						"jwt": []
 					}
 				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"comments"
+				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -365,11 +372,7 @@
 				"tags": [
 					"comments"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",

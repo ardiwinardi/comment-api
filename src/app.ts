@@ -49,6 +49,8 @@ class App {
       cors({
         origin: ORIGIN,
         allowedHeaders: ["Content-Type", "Authorization"],
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true,
       })
     );
     this.app.use(express.json()); // for receiving json payload

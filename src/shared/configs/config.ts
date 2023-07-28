@@ -7,7 +7,5 @@ export const {
   DB_PASSWORD,
   DB_DATABASE,
   SECRET_KEY,
-  LOG_FORMAT,
-  LOG_DIR,
-  ORIGIN
+  ORIGIN,
 } = process.env;

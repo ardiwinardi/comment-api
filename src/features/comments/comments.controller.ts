@@ -15,6 +15,7 @@ import {
   Path,
   Post,
   Put,
+  Query,
   Request,
   Route,
   Security,
@@ -23,6 +24,7 @@ import {
 import { injectable, registry } from "tsyringe";
 import { CommentsService } from "./comments.service";
 import { AddReactionDTO, CreateCommentDTO, UpdateCommentDTO } from "./dtos";
+import { CommentOrderBy } from "./dtos/get-comments.dto";
 import commentModel, { Comment } from "./shemas/comment.schema";
 @registry([
   {
@@ -32,8 +34,6 @@ import commentModel, { Comment } from "./shemas/comment.schema";
 ])
 @Tags("comments")
 @Route("comments")
-@Security("jwt")
-@Middlewares(isAuthenticated)
 @injectable()
 export class CommentsController extends Controller {
   constructor(private readonly commentService: CommentsService) {
@@ -41,22 +41,36 @@ export class CommentsController extends Controller {
   }
 
   @Get()
-  async getAll() {
-    const data = await this.commentService.findAll();
+  async getAll(@Query("orderBy") orderBy?: CommentOrderBy) {
+    const data = await this.commentService.findAll({ orderBy });
+    return formattedResponse({ data });
+  }
+
+  @Get("/{id}")
+  @Security("jwt")
+  @Middlewares([isValidId, isAuthenticated])
+  async getById(@Path() id: string) {
+    const data = await this.commentService.findById(id);
     return formattedResponse({ data });
   }
 
   @Post()
+  @Security("jwt")
+  @Middlewares([isAuthenticated])
   async create(
     @Body() payload: CreateCommentDTO,
     @Request() req: RequestWithUser
   ) {
     const { username, name } = req.user;
+
+    const createdAt = new Date();
     const comment: Comment = {
       user: { username, name },
       comment: payload.comment,
-      createdAt: new Date(),
-      updatedAt: null,
+      createdAt: createdAt,
+      updatedAt: createdAt,
+      totalLiked: 0,
+      totalDisliked: 0,
       reactions: [],
     };
 
@@ -65,26 +79,25 @@ export class CommentsController extends Controller {
   }
 
   @Put("{id}")
-  @Middlewares([isValidId, isCommentAuthor])
+  @Middlewares([isValidId, isAuthenticated, isCommentAuthor])
   async update(
     @Path() id: string,
     @Body() payload: UpdateCommentDTO,
     @Request() request: RequestWithComment
   ) {
-    const comment: Comment = {
-      ...request.comment,
-      comment: payload.comment,
-    };
+    const data = request.comment;
+    data.comment = payload.comment;
 
-    await this.commentService.update(comment);
+    await this.commentService.update(data);
     return formattedResponse({
-      data: comment,
+      data,
       message: "comment updated successfully",
     });
   }
 
   @Delete("{id}")
-  @Middlewares([isValidId, isCommentAuthor])
+  @Security("jwt")
+  @Middlewares([isValidId, isAuthenticated, isCommentAuthor])
   async delete(@Path() id: string, @Request() request: RequestWithComment) {
     const comment = request.comment;
     const data = await this.commentService.remove(comment);
@@ -92,13 +105,20 @@ export class CommentsController extends Controller {
   }
 
   @Post("{id}/react")
-  @Middlewares(isValidId)
+  @Middlewares([isValidId, isAuthenticated])
   async addReaction(
     @Path() id: string,
     @Body() payload: AddReactionDTO,
     @Request() request: RequestWithUser
   ) {
-    await this.commentService.addReaction(id, payload.type, request.user);
-    return formattedResponse({ message: "reaction created successfully" });
+    const data = await this.commentService.addReaction(
+      id,
+      payload.type,
+      request.user
+    );
+    return formattedResponse({
+      data,
+      message: "reaction created successfully",
+    });
   }
 }

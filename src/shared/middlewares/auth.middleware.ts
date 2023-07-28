@@ -11,30 +11,28 @@ const isAuthenticated = async (
   res: Response,
   next: NextFunction
 ) => {
-
   try {
-    const Authorization =
-      (req.header('Authorization')
-        ? req.header('Authorization').split('Bearer ')[1]
-        : null);
-        
-    if (Authorization) {
+    const token = req.header("Authorization")
+      ? req.header("Authorization").split("Bearer ")[1]
+      : null;
+
+    if (token) {
       const verificationResponse = verify(
-        Authorization,
+        token,
         SECRET_KEY
       ) as DataStoredInToken;
-      
-      const userId = verificationResponse._id;
-      const findUser = await userModel.findById(userId);
 
-      if (findUser) {
-        req.user = findUser;
+      const userId = verificationResponse._id;
+      const user = await userModel.findById(userId).select("-password");
+
+      if (user) {
+        req.user = user;
         next();
       } else {
-        next(new HttpException(401, 'invalid token'));
+        next(new HttpException(401, "invalid token"));
       }
     } else {
-      next(new HttpException(401, 'token is missing'));
+      next(new HttpException(401, "token is missing"));
     }
   } catch (error) {
     next(new HttpException(401, `authentication error : ${error.message}`));

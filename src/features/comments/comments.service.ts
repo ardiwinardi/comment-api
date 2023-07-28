@@ -1,10 +1,11 @@
-import { NotFoundException } from "@src/shared/exceptions";
+import { HttpException, NotFoundException } from "@src/shared/exceptions";
 import { Model } from "mongoose";
 import { inject, injectable } from "tsyringe";
 
 import { User } from "../auth/schemas";
 import { CommentsRepository } from "./comments.repository";
-import { Comment, Reaction } from "./shemas";
+import { CommentOrderBy, GetCommentsDTO } from "./dtos/get-comments.dto";
+import { Comment, Reaction, ReactionType } from "./shemas";
 
 @injectable()
 export class CommentsService implements CommentsRepository {
@@ -14,8 +15,18 @@ export class CommentsService implements CommentsRepository {
     return this.commentModel.findById(id).exec();
   }
 
-  findAll(): Promise<Comment[]> {
-    return this.commentModel.find().exec();
+  findAll({ orderBy }: GetCommentsDTO): Promise<Comment[]> {
+    const query = this.commentModel.find();
+    if (orderBy) {
+      if (orderBy === CommentOrderBy.NEWEST) {
+        query.sort({ updatedAt: -1 });
+      } else if (orderBy === CommentOrderBy.MOST_DISLIKED) {
+        query.sort({ totalDisliked: -1 });
+      } else if (orderBy === CommentOrderBy.MOST_LIKED) {
+        query.sort({ totalLiked: -1 });
+      }
+    }
+    return query.exec();
   }
 
   create(comment: Comment): Promise<Comment> {
@@ -42,7 +53,7 @@ export class CommentsService implements CommentsRepository {
     commentId: string,
     type: Reaction["type"],
     user: User
-  ): Promise<Reaction> {
+  ): Promise<Comment> {
     const payload: Reaction = {
       username: user.username,
       type: type as Reaction["type"],
@@ -62,6 +73,13 @@ export class CommentsService implements CommentsRepository {
       );
 
       if (index >= 0) {
+        if (reactions[index].updatedAt)
+          throw new HttpException(403, "only allowed once");
+
+        // validate if no changes
+        if (reactions[index].type === payload.type) {
+          return item;
+        }
         // update reaction
         reactions[index].type = payload.type;
         reactions[index].updatedAt = new Date();
@@ -76,8 +94,16 @@ export class CommentsService implements CommentsRepository {
 
     // store to db
     item.reactions = reactions;
+    item.totalDisliked = reactions.filter(
+      (reaction) => reaction.type === ReactionType.DISLIKE
+    ).length;
+
+    item.totalLiked = reactions.filter(
+      (reaction) => reaction.type === ReactionType.LIKE
+    ).length;
+
     await item.save();
 
-    return payload;
+    return item;
   }
 }

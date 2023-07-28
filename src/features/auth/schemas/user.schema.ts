@@ -5,8 +5,8 @@ export interface User {
   name: string;
   avatar?: string;
   username: string;
-  password: string;
-  createdAt: Date;
+  password?: string;
+  createdAt?: Date;
 }
 
 export const userSchema = new Schema<User>({

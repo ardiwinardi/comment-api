@@ -12,6 +12,8 @@ export interface Comment {
   };
   comment: string;
   reactions: Reaction[];
+  totalLiked?: number;
+  totalDisliked?: number;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -20,6 +22,8 @@ export const commentSchema = new Schema<Comment>({
   user: userSchema,
   comment: String,
   reactions: [reactionSchema],
+  totalLiked: Number,
+  totalDisliked: Number,
   createdAt: Date,
   updatedAt: Date,
 });
